@@ -25,6 +25,30 @@ st.set_page_config(
     page_title="AI Curriculum Designer",
     layout="centered"
 )
+
+# Custom CSS for Mobile Responsiveness
+st.markdown("""
+<style>
+    @media (max-width: 768px) {
+        /* Reduce padding on smaller screens to use more space */
+        .block-container {
+            padding-top: 2rem !important;
+            padding-bottom: 2rem !important;
+            padding-left: 1rem !important;
+            padding-right: 1rem !important;
+        }
+        /* Make the main title slightly smaller */
+        h1 {
+            font-size: 1.8rem !important;
+        }
+        /* Make the submit button full width on mobile */
+        .stButton>button {
+            width: 100% !important;
+        }
+    }
+</style>
+""", unsafe_allow_html=True)
+
 st.title("🧠 AI-Generated Course Curriculum Designer")
 st.markdown("Powered by Google Gemini. Use cutting-edge AI to instantly generate a professional, structured course syllabus.")
 
