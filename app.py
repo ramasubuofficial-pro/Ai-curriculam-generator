@@ -3,6 +3,8 @@ import streamlit as st
 import os
 from dotenv import load_dotenv
 from google import genai 
+import markdown
+from xhtml2pdf import pisa
 
 # Load environment variables (including GEMINI_API_KEY)
 load_dotenv()
@@ -118,15 +120,41 @@ if submitted and course_topic and course_duration:
         
         st.divider()
 
-        # 5. Generate and Offer MARKDOWN Download (Final, working solution)
+        # 5. Generate and Offer PDF Download
         
-        # The content is a string, which is perfect for a Markdown download.
-        st.download_button(
-            label="Download Curriculum (Markdown) 💾",
-            data=final_markdown,  
-            file_name=f"{course_topic.replace(' ', '_')}_Curriculum.md", # Note: .md extension
-            mime="text/markdown"
-        )
+        # Convert Markdown to HTML
+        html_content = markdown.markdown(final_markdown, extensions=['tables'])
+        
+        # Wrap in basic HTML/CSS for styling
+        styled_html = f"""
+        <html>
+        <head>
+        <style>
+            body {{ font-family: Helvetica, Arial, sans-serif; line-height: 1.6; color: #333; }}
+            h1 {{ color: #2c3e50; font-size: 24px; }}
+            h2 {{ color: #34495e; border-bottom: 1px solid #eee; padding-bottom: 5px; font-size: 20px; }}
+            h3 {{ color: #7f8c8d; font-size: 16px; }}
+            li {{ margin-bottom: 5px; }}
+        </style>
+        </head>
+        <body>
+        {html_content}
+        </body>
+        </html>
+        """
+        
+        pdf_file = BytesIO()
+        pisa_status = pisa.CreatePDF(styled_html, dest=pdf_file)
+        
+        if not pisa_status.err:
+            st.download_button(
+                label="Download Curriculum (PDF) 📄",
+                data=pdf_file.getvalue(),  
+                file_name=f"{course_topic.replace(' ', '_')}_Curriculum.pdf", 
+                mime="application/pdf"
+            )
+        else:
+            st.error("There was an error generating the PDF.")
 
     except Exception as e:
         # Catch any errors during the Gemini API call (e.g., rate limits, invalid input)
