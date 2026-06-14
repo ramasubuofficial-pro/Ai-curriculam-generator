@@ -48,6 +48,12 @@ st.markdown("""
             width: 100% !important;
         }
     }
+
+    /* Hide Streamlit Header, Menu, and Footer */
+    header {visibility: hidden;}
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    .stApp > header {display: none;}
 </style>
 """, unsafe_allow_html=True)
 
